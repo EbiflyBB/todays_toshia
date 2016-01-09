@@ -4,10 +4,6 @@ Plugin.create :today_toshia do
   on_appear do |ms|
     ms.each do |m|
 
-#      if Time.now - m[:created] > 60 * 30
-#        next
-#      end
-
       if m.to_message.user.id == toshia_user_id
         #.mikutter/settingsまでしか取得できなかったのでくっつける
         set_dir = Environment::SETTINGDIR + "/today_toshia/"
