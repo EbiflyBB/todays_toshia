@@ -1,0 +1,9 @@
+---
+slug: :todays_toshia
+depends:
+  mikutter: 3.3.3
+  plugin: []
+version: '1.0'
+author: EbiflyBB
+name: todays_toshia
+description: 'としぁさんの名前を記録しよう'
