@@ -4,6 +4,17 @@ Plugin.create :today_toshia do
   on_appear do |ms|
     ms.each do |m|
 
+      if Time.now - m[:created] > 10
+        next
+      end
+      
+      if m.message.to_s.include?('@todays_toshia ') then
+        past_toshia = return_toshia(m.message.to_s)
+        if past_toshia != nil then
+          Service.primary.post(:message => "@#{m.user.to_s} #{past_toshia}", :replyto => m)
+        end
+      end
+
       if m.to_message.user.id == toshia_user_id
         #.mikutter/settingsまでしか取得できなかったのでくっつける
         set_dir = Environment::SETTINGDIR + "/today_toshia/"
@@ -104,4 +115,51 @@ Plugin.create :today_toshia do
 
     return ["00 #{lastmonth_finaltoshia}"]
   end
+
+  def return_toshia(rep_str)
+    require 'date'
+    date_str = rep_str.slice(15..-1)
+
+    begin
+      days = Date.parse(date_str)
+    rescue
+      return nil
+    end
+
+    if days != nil then
+      set_dir = Environment::SETTINGDIR + "/today_toshia/"
+      filename = "#{days.year}#{days.month}"
+
+      prev_toshias = []
+
+      begin
+        File.open("#{set_dir}#{filename}.dat","rb:utf-8") do |file|
+          prev_toshias = file.readlines
+          file.close
+        end
+      rescue
+      end
+      
+      search_result = nil
+      while(days.strftime("%d").to_i - 1 != 0) 
+        search_result = prev_toshias.find { |t| t.slice(0, 2) == days.strftime("%d") }
+        days -= 1
+
+        if  search_result != nil then
+          break
+        end
+      end
+      
+      if search_result != nil then
+        search_result.slice!(0, 3)
+      end
+
+      p search_result
+      return search_result
+
+    else
+      return nil
+    end
+  end
+  
 end
