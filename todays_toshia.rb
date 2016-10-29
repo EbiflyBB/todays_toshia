@@ -128,20 +128,18 @@ Plugin.create :today_toshia do
 
     if days != nil then
       set_dir = Environment::SETTINGDIR + "/today_toshia/"
-      filename = "#{days.year}#{days.month}"
 
-      prev_toshias = []
+      filename = "#{set_dir}#{days.year}#{days.strftime("%m")}"
+      prev_toshias = get_toshias(filename)
 
-      begin
-        File.open("#{set_dir}#{filename}.dat","rb:utf-8") do |file|
-          prev_toshias = file.readlines
-          file.close
-        end
-      rescue
-      end
-      
       search_result = nil
-      while(days.strftime("%d").to_i - 1 != 0) 
+      while(days.strftime("%Y%m%d") != '20141130' )
+        if (days + 1).day.to_i == 1 then
+          filename = "#{set_dir}#{days.year}#{days.strftime("%m")}"
+          prev_toshias = get_toshias(filename)
+
+        end
+
         search_result = prev_toshias.find { |t| t.slice(0, 2) == days.strftime("%d") }
         days -= 1
 
@@ -160,6 +158,20 @@ Plugin.create :today_toshia do
     else
       return nil
     end
+  end
+
+  def get_toshias(filename)
+    prev_toshias = []
+  
+      begin
+        File.open("#{filename}.dat","rb:utf-8") do |file|
+          prev_toshias = file.readlines
+          file.close
+        end
+      rescue
+      end
+      
+    return prev_toshias
   end
   
 end
