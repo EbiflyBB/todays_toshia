@@ -58,7 +58,7 @@ Plugin.create :today_toshia do
           if now_toshia != last_toshia
             file.puts "#{date_day} #{now_toshia}"
             file.close
-            Service.primary.post(:message => "@home \n#{last_toshia} ↓ 
+            Service.primary.post(:message => "#{last_toshia} ↓ 
 #{m.to_message.user[:name]} \n#今日のとしぁ", :replyto => m)
           end
         end
